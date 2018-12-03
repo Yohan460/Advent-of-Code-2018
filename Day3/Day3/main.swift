@@ -55,7 +55,10 @@ func parseFile(filePath: String) -> [[String:Int]]{
         let leftOff: Int = Int((offsetStr.split(separator: ",").first)!)!
         let topOff: Int = Int((offsetStr.split(separator: ",").last)!.split(separator: ":").first!)!
         
-        fabricSwatches.append(["x":x, "y":y, "leftOff":leftOff,  "topOff":topOff])
+        let idStr = swatchStrArray.removeFirst()
+        let id = Int((idStr.split(separator: "#").first)!)!
+        
+        fabricSwatches.append(["x":x, "y":y, "leftOff":leftOff,  "topOff":topOff, "id":id])
         //print(dump(["x":x, "y":y, "leftOff":leftOff,  "topOff":topOff]))
     }
     
@@ -92,3 +95,21 @@ let countedCollisions = santaFabric.map({
     }
 )
 print("Total fabric inch collision: " + String(countedCollisions.reduce(0, +)))
+
+
+for fabricSwatch in fabricSwatches {
+    var collisionFound = false
+    
+    for y in (fabricSwatch["topOff"]!)..<(fabricSwatch["y"]! + fabricSwatch["topOff"]!) {
+        for x in (fabricSwatch["leftOff"]!)..<(fabricSwatch["x"]! + fabricSwatch["leftOff"]!) {
+            if santaFabric[y][x] >= 2 {
+                collisionFound = true
+            }
+        }
+    }
+    
+    if !collisionFound {
+        print("No collision found on id: " + String(fabricSwatch["id"]!))
+    }
+    collisionFound = false
+}
