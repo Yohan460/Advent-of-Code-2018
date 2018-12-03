@@ -9,6 +9,28 @@
 import Foundation
 
 
+// Function to compartmentalize the Integer conversion
+func parseInt(str: String) -> Int{
+    
+    // Getting the info of wheter there is a trailing comma or not
+    let isTrailingCommand = str.hasSuffix(",")
+    
+    // Creating a temporary editing string since frequencyStr is immutable
+    var frequencyStrEdit = str
+    
+    // Removing the first character
+    frequencyStrEdit = String(frequencyStrEdit.dropFirst())
+    
+    // Removing the trailing comma
+    if isTrailingCommand {
+        frequencyStrEdit = String(frequencyStrEdit.dropLast())
+    }
+    
+    // Converting the string to interger
+    return Int(frequencyStrEdit) ?? 0
+}
+
+
 // Giving a little primer incase anyone tries to run it
 if CommandLine.arguments.count == 1 || (CommandLine.arguments)[1] == "-help" {
     print("""
@@ -52,28 +74,53 @@ for frequencyStr in frequencyStrArray {
     // Getting the info on whether to add or subtract
     let isNegative = frequencyStr.hasPrefix("-")
     
-    // Getting the info of wheter there is a trailing comma or not
-    let isTrailingCommand = frequencyStr.hasSuffix(",")
-    
-    // Creating a temporary editing string since frequencyStr is immutable
-    var frequencyStrEdit = frequencyStr
-    
-    // Removing the first character
-    frequencyStrEdit = String(frequencyStrEdit.dropFirst())
-    
-    // Removing the trailing comma
-    if isTrailingCommand {
-        frequencyStrEdit = String(frequencyStrEdit.dropLast())
-    }
-    
-    // Converting the string to interger
-    let frequencyNum = Int(frequencyStrEdit)
+    let frequencyNum = parseInt(str: frequencyStr)
     
     if isNegative {
-        frequencyCorrection -= frequencyNum!
+        frequencyCorrection -= frequencyNum
     } else {
-        frequencyCorrection += frequencyNum!
+        frequencyCorrection += frequencyNum
     }
 }
 
+// Initializing the first frequency array and found variable
+var firstFrequency: [Int] = [0]
+var firstFrequencyFound = false
+
+// Resetting the counter
+var firstFrequencyFrequencyCorrection = 0
+
+// Iniitalizng a looping mechanism
+var frequencyCounter = 0
+
+while !firstFrequencyFound {
+    
+    // Getting the entry to parse
+    let frequencyStr = frequencyStrArray[frequencyCounter]
+    
+    // Getting the info on whether to add or subtract
+    let isNegative = frequencyStr.hasPrefix("-")
+    
+    // Getting the parsed Integer
+    let frequencyNum = parseInt(str: frequencyStr)
+    
+    // Tabulating
+    if isNegative {
+        firstFrequencyFrequencyCorrection -= frequencyNum
+    } else {
+        firstFrequencyFrequencyCorrection += frequencyNum
+    }
+    
+    // Determining if a match has been found
+    firstFrequencyFound = firstFrequency.contains(firstFrequencyFrequencyCorrection)
+    
+    // Appending the number
+    firstFrequency.append(firstFrequencyFrequencyCorrection)
+    
+    // Getting the Counter
+    frequencyCounter = (frequencyCounter + 1) % frequencyStrArray.count
+    print(String(frequencyCounter) + "\t: \t" + String(firstFrequencyFrequencyCorrection) + "\t: \t" + String(firstFrequency.count) + "\t: \t" + String(firstFrequencyFound))
+}
+
 print("Total Frequency Correction: " + String(frequencyCorrection))
+print("First Frequency Found: " + String(firstFrequency[firstFrequency.count - 1 ]))
