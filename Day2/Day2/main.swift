@@ -33,7 +33,7 @@ func parseFile(filePath: String) -> [String]{
     var inputFileContents = try! String(contentsOfFile: filePath)
     
     // Standardizing the input to the CLI equivalent
-    inputFileContents = inputFileContents.replacingOccurrences(of: "\n", with: ", ")
+    inputFileContents = inputFileContents.replacingOccurrences(of: "\n", with: " ")
     
     // Converting it to an iterable array
     let inputFileContentSubstrings = inputFileContents.split(separator: " ")
@@ -42,6 +42,35 @@ func parseFile(filePath: String) -> [String]{
     }
     
     return frequencyStrArray
+}
+
+func differExactlyByOne(str1: String, str2: String) -> Int {
+    
+    // Initializing
+    var atLeastOneDifference = false
+    var indexFound = -1
+    
+    // Iterating over the string
+    for i in 0..<(max(str1.count, str2.count) - 1) {
+        
+        // Checking to find differences
+        if str1[str1.index(str1.startIndex, offsetBy: i)] != str2[str2.index(str2.startIndex, offsetBy: i)] {
+            
+            // Saving the difference location
+            indexFound = i
+            
+            // if one difference has already been found reset the counter to -1
+            if atLeastOneDifference {
+                indexFound = -1
+            }
+            
+            // Setting that a difference has been found
+            atLeastOneDifference = true
+        }
+        
+    }
+    
+    return indexFound
 }
 
 // Initializing
@@ -54,6 +83,7 @@ if (CommandLine.arguments)[1] == "-inputFile" {
     idInputArray = parseFile(filePath: (CommandLine.arguments)[2])
 }
 
+// iterating over every ID
 for id in idInputArray {
     
     // Initializing
@@ -83,6 +113,23 @@ for id in idInputArray {
 print("Twos: " + String(twoOccurences))
 print("Threes: " + String(threeOccurences))
 print("Checksum: " + String(threeOccurences * twoOccurences))
+
+
+// String to check
+for id in idInputArray {
+    // Strings to check against
+    for checkid in idInputArray {
+        
+        let differIndex = differExactlyByOne(str1: id, str2: checkid)
+        
+        if differIndex != -1 {
+            print("\nID 1: " + id)
+            print("ID 2: " + checkid)
+            print("Index: " + String(differIndex))
+            exit(0)
+        }
+    }
+}
 
 
 
