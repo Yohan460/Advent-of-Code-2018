@@ -101,12 +101,59 @@ for each in Array((guardInformationTotal[sleepiestGuards[0].key]!["sleepRanges"]
     mostCommonMinuteCount[each] = minute + 1
 }
 
-let mostCommonMinute = mostCommonMinuteCount.sorted { (first: (key: Int, value: Int), second: (key: Int, value: Int)) -> Bool in
+var mostCommonMinute = mostCommonMinuteCount.sorted { (first: (key: Int, value: Int), second: (key: Int, value: Int)) -> Bool in
     return first.value > second.value
 }
 print("Most Common Minute: " + String(mostCommonMinute[0].key))
 print("Most Common Minute occurences: " + String(mostCommonMinute[0].value))
 
-//print("\nSecond part\n")
+print("\nSecond part\n")
+
+let mostCommonMinuteBewteenAllGuards = guardInformationTotal.sorted { (first: (key: Int, value: [String:AnyObject]), second: (key: Int, value: [String:AnyObject])) -> Bool in
+
+    var firstMostCommonMinuteCount: [Int:Int] = [:]
+    for each in Array((first.value["sleepRanges"] as! [[Int]]).joined()) {
+        let minute = firstMostCommonMinuteCount[each] ?? 0
+        firstMostCommonMinuteCount[each] = minute + 1
+    }
+    var firstMostCommonMinute = firstMostCommonMinuteCount.sorted { (first: (key: Int, value: Int), second: (key: Int, value: Int)) -> Bool in
+        return first.value > second.value
+    }
+    
+    
+    var secondMostCommonMinuteCount: [Int:Int] = [:]
+    for each in Array((second.value["sleepRanges"] as! [[Int]]).joined()) {
+        let minute = secondMostCommonMinuteCount[each] ?? 0
+        secondMostCommonMinuteCount[each] = minute + 1
+    }
+    var secondMostCommonMinute = secondMostCommonMinuteCount.sorted { (first: (key: Int, value: Int), second: (key: Int, value: Int)) -> Bool in
+        return first.value > second.value
+    }
+    
+    if Array((first.value["sleepRanges"] as! [[Int]]).joined()) == [] {
+        firstMostCommonMinute.append((key: -1, value: -1))
+    }
+    
+    if Array((second.value["sleepRanges"] as! [[Int]]).joined()) == [] {
+        secondMostCommonMinute.append((key: -1, value: -1))
+    }
+    
+    return firstMostCommonMinute[0].value > secondMostCommonMinute[0].value
+}
+
+
+print("Guard ID: " + String(mostCommonMinuteBewteenAllGuards[0].key))
+
+mostCommonMinuteCount = [:]
+for each in Array((guardInformationTotal[mostCommonMinuteBewteenAllGuards[0].key]!["sleepRanges"] as! [[Int]]).joined()) {
+    let minute = mostCommonMinuteCount[each] ?? 0
+    mostCommonMinuteCount[each] = minute + 1
+}
+
+mostCommonMinute = mostCommonMinuteCount.sorted { (first: (key: Int, value: Int), second: (key: Int, value: Int)) -> Bool in
+    return first.value > second.value
+}
+print("Most Common Minute: " + String(mostCommonMinute[0].key))
+print("Most Common Minute occurences: " + String(mostCommonMinute[0].value))
 
 
